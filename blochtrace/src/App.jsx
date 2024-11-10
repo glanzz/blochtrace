@@ -66,10 +66,10 @@ function App() {
         <ToastContainer/>
         <Typography variant="h1" color="primary">Bloch Trace</Typography>
         <Typography variant="p">
-          Blochsphere(<a href="https://bloch.kherb.io/">https://bloch.kherb.io/</a>) is allows you to visualize current state of the qubit. But, what if you wanted to visualize what happened to the qubit before reaching that state ?
+          Blochsphere(<a href="https://bloch.kherb.io/">https://bloch.kherb.io/</a>) allows you to visualize current state of the qubit. But, what if you wanted to visualize what happened to the qubit before reaching that state ?
           BlochTrace allows you to trace the path, which is snapshot of states the qubits followed in a given circuit. Each of qubits of the circuit are assumed to be in pure states.
           Each arrow in the trace represents snapshot of applying an operation on the qubit. 
-          View the demo below, every operation starts with pointing in z direction, the sequence of numbers are added as label.
+          View the demo below, every operation starts with pointing in z direction, the sequence of numbers are added as label. <i>Use mouse to drag and move in 3D space</i>
         </Typography>
 
         <Typography my={"20px"}>Input Program</Typography>
