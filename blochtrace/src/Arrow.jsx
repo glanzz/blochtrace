@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Text } from '@react-three/drei';
 import * as THREE from 'three';
+import { Button } from '@mui/material';
 
 function Arrow({ origin, direction, length, color }) {
   // Create a ref to hold the arrow helper
@@ -49,6 +50,7 @@ const getAxesData = () => {
 };
 
 const ArrowScene = ({data}) => {
+  const [showIndex, setShowIndex] = useState(false);
   const newData = data && data.length ? data : [];
   const colors = [0xff0000, 0xffff00, 0xffffff]
   const axesData = getAxesData();
@@ -56,13 +58,16 @@ const ArrowScene = ({data}) => {
 
   return (
     <>
+    <div style={{position: "relative"}}>
+    <Button variant="outlined" sx={{position: "absolute", left: "10px"}} onClick={() => setShowIndex(!showIndex)}>{showIndex ? "Show Gates": "Show Indices"}</Button>
+    </div>
     {
       newData.map((qubit, qi) => {
         return (
           <>
           <br/>
           <div>Visualizing Qubit {qi}:</div>
-          <Canvas key={qi} camera={{ position: [0, 0, 10], fov: 5 }}>
+          <Canvas key={qi} camera={{ position: [-8, 10, 10], fov: 5 }}>
             <OrbitControls enableZoom={true} />
             <ambientLight intensity={0.5} />
             {
@@ -90,8 +95,8 @@ const ArrowScene = ({data}) => {
               if (ei === 0 ) {
                 return null;
               }
-              let start = new THREE.Vector3(newData[qi][ei-1][0], newData[qi][ei-1][1], newData[qi][ei-1][2]);
-              let end = new THREE.Vector3(newData[qi][ei][0], newData[qi][ei][1], newData[qi][ei][2]);
+              let start = new THREE.Vector3(newData[qi][ei-1]["coord"][0], newData[qi][ei-1]["coord"][1], newData[qi][ei-1]["coord"][2]);
+              let end = new THREE.Vector3(newData[qi][ei]["coord"][0], newData[qi][ei]["coord"][1], newData[qi][ei]["coord"][2]);
               const direction = new THREE.Vector3().subVectors(end, start);
               let offset = new THREE.Vector3(0, 0, 0);
               const color = colors[qi%colors.length];
@@ -123,7 +128,7 @@ const ArrowScene = ({data}) => {
                     anchorX="center"
                     anchorY="middle"
                   >
-                    {ei}
+                    {showIndex ? ei :  newData[qi][ei]["gate"]}
                   </Text>
                 </>
             ): null

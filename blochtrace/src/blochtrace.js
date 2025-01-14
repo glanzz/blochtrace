@@ -28,13 +28,13 @@ export const traceProgram = (programString, type=INPUT_TYPE.QASM.name) => {
   const edges = [];
   for(let i = 0; i<CIRCUIT.numQubits; i++) {
     edges[i] = [];
-    edges[i][0] = [0,0,0]; // Origin
-    edges[i][1] = [0,0,1];// |0> state on bloch sphere
+    edges[i][0] = {"gate": null, "coord": [0,0,0]}; // Origin
+    edges[i][1] = {"gate": "init", "coord": [0,0,1]};// |0> state on bloch sphere
   }
 
   CIRCUIT.gates.forEach((qubit, qubitIndex) => {
     qubit.forEach(gate => {
-      const prevValue = edges[qubitIndex].at(-1);
+      const prevValue = edges[qubitIndex].at(-1)["coord"];
       let value = [];
       if (gate) {
         switch(gate.name) {
@@ -67,7 +67,7 @@ export const traceProgram = (programString, type=INPUT_TYPE.QASM.name) => {
         console.log(qubitIndex);
         console.log(value.length ? "Value adding": "Value not adding");
         if (value.length) {
-          edges[qubitIndex].push([...value]);
+          edges[qubitIndex].push({"gate": gate.name, "coord": [...value]});
         }
       }
     });
@@ -79,12 +79,12 @@ export const traceProgram = (programString, type=INPUT_TYPE.QASM.name) => {
     let plots = [];
     qubit.forEach((edge, index) => {
       if (index === 0) {
-        plots.push([...edge]);
+        plots.push({...edge, "coord": [...edge["coord"]]});
       } else {
-        let pedge  = plots[index-1];
-        plots[index] = [pedge[0] + edge[0],
-          pedge[1] + edge[1],
-          pedge[2] + edge[2]]
+        let pedge  = plots[index-1]["coord"];
+        plots[index] = {...edge, "coord": [pedge[0] + edge["coord"][0],
+          pedge[1] + edge["coord"][1],
+          pedge[2] + edge["coord"][2]]}
       }
       
     });
