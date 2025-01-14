@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {useEffect, useRef} from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Text } from '@react-three/drei';
@@ -23,10 +24,35 @@ function Arrow({ origin, direction, length, color }) {
   );
 }
 
+const MAX_AXIS_VALUE = 800;
+
+const axesNames = ["x", "y", "z"];
+const getAxesData = () => {
+  const origin = new THREE.Vector3(0,0,0);
+  let i = 0;
+  let axis = [];
+  let a = [0,0,0];
+  while(i<3) {
+    axis.push({
+      "origin": origin,
+      "direction": new THREE.Vector3(...a.map((x,j) => (j == i) ? MAX_AXIS_VALUE : 0)),
+      "text": axesNames[i]
+    })
+    axis.push({
+      "origin": origin,
+      "direction": new THREE.Vector3(...a.map((x,j) => (j == i) ? -MAX_AXIS_VALUE : 0)),
+      "text": `-${axesNames[i]}`,
+    })
+    i+=1;
+  }
+  return axis;
+};
+
 const ArrowScene = ({data}) => {
   const newData = data && data.length ? data : [];
   const colors = [0xff0000, 0xffff00, 0xffffff]
-  console.log(newData);
+  const axesData = getAxesData();
+
 
   return (
     <>
@@ -39,6 +65,27 @@ const ArrowScene = ({data}) => {
           <Canvas key={qi} camera={{ position: [0, 0, 10], fov: 5 }}>
             <OrbitControls enableZoom={true} />
             <ambientLight intensity={0.5} />
+            {
+              axesData.map(data => (
+                <>
+                  <Arrow
+                    origin={data["origin"]}
+                    direction={data["direction"]}
+                    length={MAX_AXIS_VALUE}
+                    color={0xf1f1f1}
+                  />
+                  <Text
+                    position={data["origin"].clone().add(data["direction"].clone().multiplyScalar(1 / (MAX_AXIS_VALUE*2)))}
+                    fontSize={0.1}
+                    color={0xf1f1f1}
+                    anchorX="left"
+                    anchorY="bottom"
+                  >
+                    {data["text"]}
+                  </Text>
+                </>
+              ))
+            }
             {qubit.map( (edge, ei) => {
               if (ei === 0 ) {
                 return null;
