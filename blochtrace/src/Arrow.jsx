@@ -59,7 +59,7 @@ const ArrowScene = ({data}) => {
   return (
     <>
     <div style={{position: "relative"}}>
-    <Button variant="outlined" sx={{position: "absolute", left: "10px"}} onClick={() => setShowIndex(!showIndex)}>{showIndex ? "Show Gates": "Show Indices"}</Button>
+      {!!(newData && newData.length) && <Button variant="outlined" sx={{position: "absolute", left: "10px"}} onClick={() => setShowIndex(!showIndex)}>{showIndex ? "Show Gates": "Show Indices"}</Button>}
     </div>
     {
       newData.map((qubit, qi) => {
